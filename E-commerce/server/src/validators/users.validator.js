@@ -1,21 +1,19 @@
-import { body, validationResult } from 'express-validator';
+import { body, validationResult } from "express-validator";
 
 const validateRegister = [
-  body('name')
-    .notEmpty()
-    .withMessage('Name is required'),
+  body("name").notEmpty().withMessage("Name is required"),
 
-  body('email')
+  body("email")
     .notEmpty()
-    .withMessage('Email is required')
-    .isEmail()
-    .withMessage('Enter a valid email'),
+    .withMessage("Email is required")
+    .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
+    .withMessage("Enter a valid email"),
 
-  body('password')
+  body("password")
     .notEmpty()
-    .withMessage('Password is required')
+    .withMessage("Password is required")
     .isLength({ min: 6 })
-    .withMessage('Password must be at least 6 characters'),
+    .withMessage("Password must be at least 6 characters"),
 ];
 
-export default validateRegister
+export default validateRegister;
