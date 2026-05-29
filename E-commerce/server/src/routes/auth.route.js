@@ -1,5 +1,5 @@
 import express from 'express'
-import { registerUser } from '../controllers/auth.controller.js'
+import { registerUser ,loginUser } from '../controllers/auth.controller.js'
 import validateRegister from '../validators/users.validator.js'
 import checkErrors from '../middlewares/validator.middleware.js'
 const router = express.Router()
@@ -17,6 +17,6 @@ router.post('/register', validateRegister, checkErrors , registerUser)
  * @description Login an existing user need email and password in the request body
  * @access Public
  */
-// router.post('/login')
+router.post('/login', loginUser)
 
 export default router
