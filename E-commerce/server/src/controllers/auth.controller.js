@@ -1,7 +1,7 @@
 import asycHandler from "../utils/asycHandler.js";
 import { registerService } from "../services/auth.services.js";
 import jwt from "jsonwebtoken";
-
+import config from '../config/config.js'
 // controller for user registration
 const registerUser = asycHandler(async (req, res) => {
   const response = await registerService(req.body);
@@ -10,7 +10,7 @@ const registerUser = asycHandler(async (req, res) => {
     {
       userId: response._id,
     },
-    process.env.JWT_SECRET,
+    config.JWT_SECRET,
     { expiresIn: "1d" },
   );
 

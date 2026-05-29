@@ -4,7 +4,8 @@ dotenv.config()
 
 const REQUIRED_KEYS = [
   "MONGODB_URL",
-  "PORT"
+  "PORT",
+  "JWT_SECRET"
 ];
 
 
@@ -17,7 +18,8 @@ for (const key of REQUIRED_KEYS) {
 
 const config = {
   MONGODB_URL: process.env.MONGODB_URL,
-  PORT: process.env.PORT || 3000 // optional default
+  PORT: process.env.PORT || 3000 , // optional default
+  JWT_SECRET : process.env.JWT_SECRET
 };
 
 export default config;

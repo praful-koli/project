@@ -15,11 +15,9 @@ const registerService = async (userData) => {
     throw new ApiError(409, "User Already register go to login");
   }
 
-  // if user is new then register the user and hash a password
+  // if user is new then register the user 
 
-  let hashpassword = await bcrypt.hash(password, 10)
-
-  let newUser = await userModel.create({ name, email, password :hashpassword });
+  let newUser = await userModel.create({ name, email, password });
 
   return newUser;
 };
