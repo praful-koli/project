@@ -1,7 +1,7 @@
 import userModel from "../models/users.model.js";
 import ApiError from "../utils/ApiError.js";
-import validateEmail from "../utils/validateEamil.js";
-import bcrypt from 'bcrypt'
+
+
 
 
 // regtisterService

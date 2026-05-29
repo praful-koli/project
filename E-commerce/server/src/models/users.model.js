@@ -36,6 +36,6 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
 }
 
 
-const userModel = mongoose.model('userSchema' , productSchema)
+const userModel = mongoose.model('userSchema' , userSchema)
 
 export default userModel

@@ -21,5 +21,7 @@ const registerUser = asycHandler(async (req, res) => {
     message: "User registered successfully",
     data: response,
   });
-  
+
 });
+
+export {registerUser}
