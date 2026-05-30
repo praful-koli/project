@@ -1,4 +1,4 @@
-import { createProductService } from "../services/products.services.js";
+import { createProductService, getAllProductsServices } from "../services/products.services.js";
 import asycHandler from "../utils/asycHandler.js";
 
 
@@ -14,5 +14,26 @@ const createProduct = asycHandler ( async (req , res) => {
     })
 })
 
+// get all product controller 
 
-export {createProduct}
+const getAllProducts = asycHandler (async (req  , res) => {
+    // get category from query params
+
+    let response = await getAllProductsServices(req.query);
+
+    res.status(200).json({
+        success : true,
+        message : "Product fetch successfully",
+        category : req.query.category,
+        response
+    })
+
+})
+
+
+
+// Get product by id 
+// const getPorductById = asycHandler (async (req , res) => {
+//     let response  = await 
+// })
+export {createProduct , getAllProducts}
