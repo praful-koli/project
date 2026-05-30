@@ -4,7 +4,8 @@ import validateProduct from '../validators/product.validator.js'
 import checkErrors from '../middlewares/validator.middleware.js'
 import identifyUser from '../middlewares/auth.middleware.js'
 import upload from '../config/multer.js'
-import { createProduct , getAllProducts , getPorductById} from '../controllers/products.controller.js'
+import { createProduct , getAllProducts , getPorductById  , updateProduct} from '../controllers/products.controller.js'
+
 /**
  * @route POST /api/products
  * @description Create new products 
@@ -36,5 +37,16 @@ router.get('/', getAllProducts)
  */
 
 router.get('/:id' , getPorductById)
+
+
+/**
+ * @route PUT /api/:id 
+ * @description Update product by id 
+ * @access Priviet
+ * @body name {String} , description {String} , price {Number},category{{String}} ,images {String}
+ * @example /api/product/2128417hrf387r1hy18hnd1hd12
+ */
+
+router.put('/:id' , identifyUser , upload.array('images') ,  validateProduct , checkErrors , updateProduct )
 
 export default router

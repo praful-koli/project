@@ -50,7 +50,7 @@ const getAllProductsServices = async ({ category }) => {
 };
 
 
-// Get product by id
+// Get product by id services
 const getPorductByIdServices = async (id) => {
     // ID validation
     if (!mongoose.Types.ObjectId.isValid({id})) {
@@ -70,4 +70,40 @@ const getPorductByIdServices = async (id) => {
 
 }
 
-export { createProductService, getAllProductsServices  , getPorductByIdServices};
+
+// update product servieces
+
+const updateProductServices = async (productData , images , id) => {
+    // console.log("product : ", productDate);
+    // console.log("images : ", images);
+    // console.log("id : ", id);
+
+    // check id is valid
+    if(!mongoose.Types.ObjectId.isValid({id})) {
+        throw new ApiError (400, "Invalid ID")
+    }
+     
+    let product = await productModel.findById(id)
+
+    if (!product) {
+        throw new ApiError ( 404 , 'Product Not Found')
+    }
+   
+    // upload images to imagekit
+
+    let filesUploadUrl = await Promise.all(images.map(async(image) => {
+        return await uploadImage(image.buffer , image.originalname)
+    }))
+
+     // Update product 
+
+     const updatedProduct = await productModel.findByIdAndUpdate(id ,{
+        ...productData ,
+        images :filesUploadUrl.map((img) => img.url)
+     } , {
+        new:true, runValidators : true // return update product response
+     })
+
+    return updatedProduct
+}
+export { createProductService, getAllProductsServices  , getPorductByIdServices ,updateProductServices};

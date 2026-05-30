@@ -1,4 +1,4 @@
-import { createProductService, getAllProductsServices , getPorductByIdServices } from "../services/products.services.js";
+import { createProductService, getAllProductsServices , getPorductByIdServices  ,updateProductServices} from "../services/products.services.js";
 import asycHandler from "../utils/asycHandler.js";
 
 
@@ -32,7 +32,7 @@ const getAllProducts = asycHandler (async (req  , res) => {
 
 
 
-// Get product by id 
+// Get product by id  controller
 const getPorductById = asycHandler (async (req , res) => {
 
     let response  = await getPorductByIdServices(req.params.id)
@@ -44,4 +44,17 @@ const getPorductById = asycHandler (async (req , res) => {
     })
 })
 
-export {createProduct , getAllProducts , getPorductById}
+
+// update Product by id  controller
+const updateProduct = asycHandler ( async (req , res) => {
+   
+   const response = await updateProductServices(req.body , req.files ,req.params.id)
+
+   res.status(200).json({
+        success : true,
+        message : "Product update successfully",
+        response
+    })
+})
+
+export {createProduct , getAllProducts , getPorductById, updateProduct}
