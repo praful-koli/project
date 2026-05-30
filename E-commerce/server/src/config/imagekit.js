@@ -1,24 +1,25 @@
 //config imagekit
 import imagekit from 'imagekit'
 import config from './config.js'
+
 const imagekitInstance = new imagekit({
     privateKey : config.IMK_PRIVATE_KEY,
     publicKey : config.IMK_PUBLIC_KEY,
     urlEndpoint : config.IMK_URL
 })
 
-const uploadImage = async (files , fileName)=> {
+const uploadImage = async (fileBuffer , fileName)=> {
    try {
      let option = {
-        files,
+        file: fileBuffer, 
         fileName,
         folder : "kodex"
      }
 
      return  await imagekitInstance.upload(option)
    } catch (error) {
-      console.log('File upload failed' , error.message)
+      console.log('File upload failed' , error)
    }
 }
 
-export  default uploadImage
+export default uploadImage
