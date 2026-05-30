@@ -74,9 +74,6 @@ const getPorductByIdServices = async (id) => {
 // update product servieces
 
 const updateProductServices = async (productData , images , id) => {
-    // console.log("product : ", productDate);
-    // console.log("images : ", images);
-    // console.log("id : ", id);
 
     // check id is valid
     if(!mongoose.Types.ObjectId.isValid({id})) {
@@ -106,4 +103,26 @@ const updateProductServices = async (productData , images , id) => {
 
     return updatedProduct
 }
-export { createProductService, getAllProductsServices  , getPorductByIdServices ,updateProductServices};
+
+// delete single porduct servieces 
+const deleteProductServices = async (id) => {
+  
+    // check id is valid or ot
+    if (!mongoose.Types.ObjectId.isValid({id})) {
+        throw new ApiError (400, "Invalid Id")
+    }
+
+    // validation pass then check the product is exist
+
+    const product = await productModel.findById(id)
+
+    if (!product) {
+        throw new ApiError(404 , "Product Not Found")
+    }
+   
+    // Delelte product
+     await productModel.findByIdAndDelete(id)
+}
+
+
+export { createProductService , getAllProductsServices  , getPorductByIdServices , updateProductServices , deleteProductServices};

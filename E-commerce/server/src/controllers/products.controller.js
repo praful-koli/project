@@ -1,4 +1,4 @@
-import { createProductService, getAllProductsServices , getPorductByIdServices  ,updateProductServices} from "../services/products.services.js";
+import { createProductService, getAllProductsServices , getPorductByIdServices  ,updateProductServices , deleteProductServices} from "../services/products.services.js";
 import asycHandler from "../utils/asycHandler.js";
 
 
@@ -45,7 +45,7 @@ const getPorductById = asycHandler (async (req , res) => {
 })
 
 
-// update Product by id  controller
+// update product by id  controller
 const updateProduct = asycHandler ( async (req , res) => {
    
    const response = await updateProductServices(req.body , req.files ,req.params.id)
@@ -57,4 +57,15 @@ const updateProduct = asycHandler ( async (req , res) => {
     })
 })
 
-export {createProduct , getAllProducts , getPorductById, updateProduct}
+
+// delelte product by id controller
+const deleteProduct = asycHandler ( async (req ,res) => {
+    const response = await deleteProductServices(req.params.id)
+
+    res.status(200).json({
+        success : true,
+        message: "Product deleted successfully"
+    })
+})
+
+export {createProduct , getAllProducts , getPorductById, updateProduct , deleteProduct}
