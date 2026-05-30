@@ -1,4 +1,4 @@
-import { createProductService, getAllProductsServices } from "../services/products.services.js";
+import { createProductService, getAllProductsServices , getPorductByIdServices } from "../services/products.services.js";
 import asycHandler from "../utils/asycHandler.js";
 
 
@@ -33,7 +33,15 @@ const getAllProducts = asycHandler (async (req  , res) => {
 
 
 // Get product by id 
-// const getPorductById = asycHandler (async (req , res) => {
-//     let response  = await 
-// })
-export {createProduct , getAllProducts}
+const getPorductById = asycHandler (async (req , res) => {
+
+    let response  = await getPorductByIdServices(req.params.id)
+
+    res.status(200).json({
+        success : true,
+        message : 'product fetch sucessfully',
+        response
+    })
+})
+
+export {createProduct , getAllProducts , getPorductById}

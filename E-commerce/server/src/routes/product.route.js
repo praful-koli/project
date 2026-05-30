@@ -27,14 +27,14 @@ router.post('/' , identifyUser , upload.array('images') , validateProduct , chec
 router.get('/', getAllProducts)
 
 
-// /**
-//  * @route GET /api/products/:id
-//  * @description Get a single product by its ID
-//  * @access Public
-//  * @param {string} id - MongoDB product ID (required)
-//  * @example GET /api/products/665f1b2c9f1b2c0012345678
-//  */
+/**
+ * @route GET /api/products/:id
+ * @description Get a single product by its ID
+ * @access Public
+ * @param {string} id - MongoDB product ID (required)
+ * @example GET /api/products/665f1b2c9f1b2c0012345678
+ */
 
-// router.get('/:id' , getPorductById)
+router.get('/:id' , getPorductById)
 
 export default router

@@ -1,5 +1,7 @@
+import mongoose from "mongoose";
 import uploadImage from "../config/imagekit.js";
 import productModel from "../models/products.model.js";
+import ApiError from "../utils/ApiError.js";
 // Create product and upload multiple image using imagekit
 
 const createProductService = async (product, images) => {
@@ -49,18 +51,23 @@ const getAllProductsServices = async ({ category }) => {
 
 
 // Get product by id
+const getPorductByIdServices = async (id) => {
+    // ID validation
+    if (!mongoose.Types.ObjectId.isValid({id})) {
+        throw new ApiError(400 , 'Invalid ID')
+  
+    }
+   
+    // validaiton pass get product by id
 
-// const getPorductByIdServices = async ({id}) => {
-//     // ID validation
-//     if (!mongoose.Types.ObjectId.isValid(id)) {
-//         return res.status(400).json({ error: "Invalid note ID" });
-//     }
- 
-//     let product = await productModel.findById(id)
-//     if (!product) {
-        
-//     }
-//     return product
+    let product = await productModel.findById(id)
 
-// }
-export { createProductService, getAllProductsServices };
+    if (!product) {
+        throw new ApiError(404 , "Product Not found")
+    }
+
+    return product
+
+}
+
+export { createProductService, getAllProductsServices  , getPorductByIdServices};
