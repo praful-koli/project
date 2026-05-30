@@ -1,667 +1,192 @@
-# 🛒 E-Commerce Product API
+# E-Commerce Product API
 
-A simple and clean REST API to manage e-commerce products. Built with **Node.js**, **Express**, and **MongoDB**. Supports product creation, image uploads, category filtering, and full CRUD operations.
+REST API for managing products in an e-commerce application.
 
----
+This project is built using Node.js, Express.js, MongoDB, JWT, Multer, and ImageKit. It provides user authentication, product management, image uploads, and category-based filtering.
 
-## 📁 Folder Structure
+## Features
 
-```
-E-commerce/server
-├── src/
-│   ├── controllers/
-│   │   └── products.controller.js
-│   ├── middlewares/
-│   │   ├── auth.middleware.js
-│   │   ├── error.middleware.js
-│   │   └── validator.middleware.js
-│   ├── models/
-│   │   ├── products.model.js
-│   │   └── users.model.js
-│   ├── routes/
-│   │   ├── auth.route.js
-│   │   └── product.route.js
-│   ├── services/
-│   │   ├── auth.services.js
-│   │   └── products.services.js
-│   ├── utils/
-│   │   ├── ApiError.js
-│   │   └── asyncHandler.js
-│   ├── validators/
-│   │   ├── product.validator.js
-│   │   └── users.validator.js
+* User registration and login
+* JWT authentication
+* Create, update, delete, and fetch products
+* Upload multiple product images
+* Store images using ImageKit
+* Filter products by category
+* Request validation using express-validator
+* Centralized error handling
+
+## Project Structure
+
+```text
+server
+│
+├── src
+│   ├── controllers
+│   ├── middlewares
+│   ├── models
+│   ├── routes
+│   ├── services
+│   ├── utils
+│   ├── validators
 │   └── app.js
+│
 ├── .env
 ├── .gitignore
 ├── package.json
 └── server.js
 ```
 
----
+## Tech Stack
 
-## ✨ Features
+* Node.js
+* Express.js
+* MongoDB
+* Mongoose
+* JWT
+* Bcrypt
+* Multer
+* ImageKit
+* Express Validator
 
-- User registration and login with JWT authentication
-- Create, read, update, and delete products
-- Multiple image upload using **Multer** + **ImageKit**
-- Category-based product filtering using query params
-- Input validation using **express-validator**
-- Centralized error handling
-- Clean and scalable folder structure
+## Installation
 
----
-
-## 🧰 Tech Stack
-
-| Technology | Purpose |
-|------------|---------|
-| Node.js | Runtime environment |
-| Express.js | Web framework |
-| MongoDB | Database |
-| Mongoose | MongoDB ODM |
-| JWT | Authentication |
-| Multer | File/image upload handling |
-| ImageKit | Cloud image storage |
-| express-validator | Input validation |
-| bcrypt | Password hashing |
-| dotenv | Environment variables |
-
----
-
-## ⚙️ Project Setup — Step by Step
-
-### 1. Clone the Repository
+Clone the repository:
 
 ```bash
 git clone https://github.com/praful-koli/project.git
-cd project/server
+
+cd project
 ```
 
-### 2. Install Dependencies
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-### 3. Create `.env` File
-
-Create a `.env` file in the root folder and add the following:
+Create a `.env` file in the root directory:
 
 ```env
 PORT=3000
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret_key
 
-IMAGEKIT_PUBLIC_KEY=your_imagekit_public_key
-IMAGEKIT_PRIVATE_KEY=your_imagekit_private_key
+MONGO_URI=your_mongodb_connection_string
+
+JWT_SECRET=your_jwt_secret
+
+IMAGEKIT_PUBLIC_KEY=your_public_key
+IMAGEKIT_PRIVATE_KEY=your_private_key
 IMAGEKIT_URL_ENDPOINT=https://ik.imagekit.io/your_imagekit_id
 ```
 
-### 4. Run the Server
+Run the server:
 
 ```bash
-# Development mode
 npm run dev
-
-# Production mode
-npm start
 ```
 
-Server will start at: `http://localhost:3000`
+The server will start on:
 
----
+```text
+http://localhost:3000
+```
 
-## 🖼️ Multer + ImageKit Setup
+## Image Upload
 
-This project uses **Multer** to handle file uploads and **ImageKit** to store images in the cloud.
+Images are uploaded using Multer and stored in ImageKit.
 
-### How it works:
-
-1. User sends images via `form-data` in Postman
-2. **Multer** reads the files from the request using `upload.array('images', 10)`
-3. Each file is uploaded to **ImageKit** cloud storage
-4. ImageKit returns a public URL for each image
-5. The URLs are saved in the `images` array in MongoDB
-
-### Install packages:
+Install required packages:
 
 ```bash
 npm install multer imagekit
 ```
 
-### Multer Config (uses memory storage for ImageKit):
+Basic Multer configuration:
 
 ```js
-const multer = require('multer');
-const storage = multer.memoryStorage(); // store in memory, not disk
-const upload = multer({ storage });
+import multer from "multer";
+
+const storage = multer.memoryStorage();
+
+export const upload = multer({
+  storage,
+});
 ```
 
-### ImageKit Upload:
+## Authentication
+
+After login, a JWT token is returned.
+
+For protected routes, include the token in the request header:
+
+```http
+Authorization: Bearer YOUR_TOKEN
+```
+
+## API Routes
+
+### Auth Routes
+
+| Method | Route              |
+| ------ | ------------------ |
+| POST   | /api/auth/register |
+| POST   | /api/auth/login    |
+
+### Product Routes
+
+| Method | Route             | Access    |
+| ------ | ----------------- | --------- |
+| GET    | /api/products     | Public    |
+| GET    | /api/products/:id | Public    |
+| POST   | /api/products     | Protected |
+| PUT    | /api/products/:id | Protected |
+| DELETE | /api/products/:id | Protected |
+
+## User Schema
 
 ```js
-const ImageKit = require('imagekit');
-
-const imagekit = new ImageKit({
-  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
-  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
-  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
-});
-
-// Upload file buffer to ImageKit
-const result = await imagekit.upload({
-  file: req.file.buffer,        // file buffer from multer
-  fileName: req.file.originalname,
-  folder: '/products',
-});
-
-const imageUrl = result.url;    // save this URL in DB
-```
-
----
-
-## 📬 API Endpoints
-
-Base URL: `http://localhost:3000/api`
-
----
-
-### 🔐 Auth Routes
-
----
-
-#### 1. Register User
-
-| Field | Details |
-|-------|---------|
-| **Route** | `/api/auth/register` |
-| **Method** | `POST` |
-| **Auth Required** | No |
-| **Content-Type** | `application/json` |
-
-**Request Body:**
-
-```json
 {
-  "name": "praful koli",
-  "email": "praful@example.com",
-  "password": "password12"
+  name: String,
+  email: String,
+  password: String
 }
 ```
 
-**Required Fields:**
+## Product Schema
 
-| Field | Type | Rules |
-|-------|------|-------|
-| name | String | Required |
-| email | String | Required, valid email format |
-| password | String | Required, minimum 6 characters |
-
-**Success Response `201`:**
-
-```json
+```js
 {
-  "success": true,
-  "message": "User registered successfully",
-  "data": {
-    "_id": "6a1a1a98ff5ed82a2cc18f6d",
-    "name": "praful koli",
-    "email": "praful@example.com"
-  }
+  name: String,
+  description: String,
+  price: Number,
+  category: String,
+  images: [String]
 }
 ```
 
-**Error Responses:**
+## Validation Rules
 
-| Status | Reason |
-|--------|--------|
-| `400` | Validation failed (missing fields, invalid email) |
-| `409` | Email already registered |
-| `500` | Server error |
+### User Validation
 
----
-
-#### 2. Login User
-
-| Field | Details |
-|-------|---------|
-| **Route** | `/api/auth/login` |
-| **Method** | `POST` |
-| **Auth Required** | No |
-| **Content-Type** | `application/json` |
-
-**Request Body:**
-
-```json
-{
-  "email": "praful@example.com",
-  "password": "password12"
-}
-```
-
-**Required Fields:**
-
-| Field | Type | Rules |
-|-------|------|-------|
-| email | String | Required, valid email |
-| password | String | Required |
-
-**Success Response `200`:**
-
-```json
-{
-  "success": true,
-  "message": "User login successfully",
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "data": {
-    "_id": "6a1a1a98ff5ed82a2cc18f6d",
-    "name": "praful koli",
-    "email": "praful@example.com"
-  }
-}
-```
-
-**Error Responses:**
-
-| Status | Reason |
-|--------|--------|
-| `400` | Validation failed |
-| `401` | Invalid email or password |
-| `500` | Server error |
-
-> ⚠️ **Note:** Copy the `token` from the login response. Use it as a `Bearer Token` in the Authorization header for all protected routes.
-
----
-
-### 📦 Product Routes
-
----
-
-#### 3. Create Product 🔒 Protected
-
-| Field | Details |
-|-------|---------|
-| **Route** | `/api/products` |
-| **Method** | `POST` |
-| **Auth Required** | ✅ Yes — Bearer Token |
-| **Content-Type** | `multipart/form-data` |
-
-**How to send in Postman:**
-- Go to **Body → form-data**
-- Add text fields and file fields as shown below
-
-**Request Body (form-data):**
-
-| Key | Type | Required | Description |
-|-----|------|----------|-------------|
-| name | Text | ✅ Yes | Product name |
-| price | Text | ✅ Yes | Product price (number) |
-| description | Text | No | Product description |
-| category | Text | No | Product category |
-| images | File | No | Multiple image files |
-
-**Example Input:**
-
-```
-name        → Zero to One
-description → Zero to One book by Peter Thiel
-price       → 499
-category    → books
-images      → [file1.jpg, file2.jpg, file3.jpg]
-```
-
-**Success Response `201`:**
-
-```json
-{
-  "success": true,
-  "message": "Product create successfully",
-  "response": {
-    "_id": "6a1a477c618a899c611447d8",
-    "name": "Zero to One",
-    "description": "Zero to One",
-    "price": 499,
-    "category": "books",
-    "images": [
-      "https://ik.imagekit.io/v86rw4cc9/kodex/image1.jpg",
-      "https://ik.imagekit.io/v86rw4cc9/kodex/image2.jpg"
-    ],
-    "createdAt": "2026-05-30T02:12:12.770Z",
-    "updatedAt": "2026-05-30T02:12:12.770Z"
-  }
-}
-```
-
-**Error Responses:**
-
-| Status | Reason |
-|--------|--------|
-| `400` | Validation failed (name or price missing) |
-| `401` | No token / invalid token |
-| `500` | Server error |
-
----
-
-#### 4. Get All Products
-
-| Field | Details |
-|-------|---------|
-| **Route** | `/api/products` |
-| **Method** | `GET` |
-| **Auth Required** | No |
-
-**Query Parameters (optional):**
-
-| Param | Type | Description |
-|-------|------|-------------|
-| category | String | Filter products by category |
-
-**Example Requests:**
-
-```
-GET http://localhost:3000/api/products
-GET http://localhost:3000/api/products?category=electronics
-GET http://localhost:3000/api/products?category=books
-```
-
-**Success Response `200` — All Products:**
-
-```json
-{
-  "success": true,
-  "message": "Product fetch successfully",
-  "response": [
-    {
-      "_id": "6a1a3282382888ef61ee860d",
-      "name": "Apple",
-      "description": "iPhone 17 pro max 1TB",
-      "price": 1600000,
-      "category": "electronics",
-      "images": [
-        "https://ik.imagekit.io/v86rw4cc9/kodex/image1.jpg"
-      ],
-      "createdAt": "2026-05-30T00:42:42.607Z",
-      "updatedAt": "2026-05-30T03:31:24.675Z"
-    }
-  ]
-}
-```
-
-**Success Response `200` — Category Filtered:**
-
-```json
-{
-  "success": true,
-  "message": "Product fetch successfully",
-  "category": "books",
-  "response": [
-    {
-      "_id": "6a1a75d49b8c44de718a69ae",
-      "name": "Zero to One",
-      "description": "Zero to One",
-      "price": 599,
-      "category": "books",
-      "images": [
-        "https://ik.imagekit.io/v86rw4cc9/kodex/image1.jpg"
-      ]
-    }
-  ]
-}
-```
-
-**Error Responses:**
-
-| Status | Reason |
-|--------|--------|
-| `404` | No products found |
-| `500` | Server error |
-
----
-
-#### 5. Get Product by ID
-
-| Field | Details |
-|-------|---------|
-| **Route** | `/api/products/:id` |
-| **Method** | `GET` |
-| **Auth Required** | No |
-
-**URL Parameter:**
-
-| Param | Type | Required | Description |
-|-------|------|----------|-------------|
-| id | String | ✅ Yes | MongoDB product ID |
-
-**Example Request:**
-
-```
-GET http://localhost:3000/api/products/6a1a3282382888ef61ee860d
-```
-
-**Success Response `200`:**
-
-```json
-{
-  "success": true,
-  "message": "product fetch sucessfully",
-  "response": {
-    "_id": "6a1a3282382888ef61ee860d",
-    "name": "Apple",
-    "description": "MacBook Air M5 Pro Max",
-    "price": 150000,
-    "category": "electronics",
-    "images": [
-      "https://ik.imagekit.io/v86rw4cc9/kodex/image1.jpg",
-      "https://ik.imagekit.io/v86rw4cc9/kodex/image2.jpg"
-    ],
-    "createdAt": "2026-05-30T00:42:42.607Z",
-    "updatedAt": "2026-05-30T00:42:42.607Z"
-  }
-}
-```
-
-**Error Responses:**
-
-| Status | Reason |
-|--------|--------|
-| `400` | Invalid MongoDB ID format |
-| `404` | Product not found |
-| `500` | Server error |
-
----
-
-#### 6. Update Product 🔒 Protected
-
-| Field | Details |
-|-------|---------|
-| **Route** | `/api/products/:id` |
-| **Method** | `PUT` |
-| **Auth Required** | ✅ Yes — Bearer Token |
-| **Content-Type** | `multipart/form-data` |
-
-**URL Parameter:**
-
-| Param | Type | Required |
-|-------|------|----------|
-| id | String | ✅ Yes |
-
-**Request Body (form-data) — same as Create:**
-
-| Key | Type | Description |
-|-----|------|-------------|
-| name | Text | Updated product name |
-| price | Text | Updated price |
-| description | Text | Updated description |
-| category | Text | Updated category |
-| images | File | New image files |
-
-**Example Request:**
-
-```
-PUT http://localhost:3000/api/products/6a1a3282382888ef61ee860d
-```
-
-**Success Response `200`:**
-
-```json
-{
-  "success": true,
-  "message": "Product update successfully",
-  "response": {
-    "_id": "6a1a3282382888ef61ee860d",
-    "name": "Apple",
-    "description": "iPhone 17 pro max 1TB",
-    "price": 1600000,
-    "category": "electronics",
-    "images": [
-      "https://ik.imagekit.io/v86rw4cc9/kodex/image1.jpg",
-      "https://ik.imagekit.io/v86rw4cc9/kodex/image2.jpg"
-    ],
-    "createdAt": "2026-05-30T00:42:42.607Z",
-    "updatedAt": "2026-05-30T03:31:24.675Z"
-  }
-}
-```
-
-**Error Responses:**
-
-| Status | Reason |
-|--------|--------|
-| `400` | Validation failed or invalid ID |
-| `401` | No token / invalid token |
-| `404` | Product not found |
-| `500` | Server error |
-
----
-
-#### 7. Delete Product 🔒 Protected
-
-| Field | Details |
-|-------|---------|
-| **Route** | `/api/products/:id` |
-| **Method** | `DELETE` |
-| **Auth Required** | ✅ Yes — Bearer Token |
-
-**URL Parameter:**
-
-| Param | Type | Required |
-|-------|------|----------|
-| id | String | ✅ Yes |
-
-**Example Request:**
-
-```
-DELETE http://localhost:3000/api/products/6a1a477c618a899c611447d8
-```
-
-**Success Response `200`:**
-
-```json
-{
-  "success": true,
-  "message": "Product deleted successfully"
-}
-```
-
-**Error Responses:**
-
-| Status | Reason |
-|--------|--------|
-| `401` | No token / invalid token |
-| `404` | Product not found |
-| `500` | Server error |
-
----
-
-## 🔑 Authentication — How to Use
-
-1. **Register** a new user via `POST /api/auth/register`
-2. **Login** via `POST /api/auth/login` — copy the `token` from response
-3. For **protected routes**, go to Postman → **Authorization tab** → select **Bearer Token** → paste the token
-
----
-
-## 🔒 Protected vs Public Routes
-
-| Method | Route | Auth Required |
-|--------|-------|--------------|
-| POST | `/api/auth/register` | ❌ Public |
-| POST | `/api/auth/login` | ❌ Public |
-| GET | `/api/products` | ❌ Public |
-| GET | `/api/products/:id` | ❌ Public |
-| POST | `/api/products` | ✅ Protected |
-| PUT | `/api/products/:id` | ✅ Protected |
-| DELETE | `/api/products/:id` | ✅ Protected |
-
----
-
-## ✅ Validation Rules
-
-### User Validation (Register)
-
-| Field | Rule |
-|-------|------|
-| name | Required, not empty |
-| email | Required, valid email format |
-| password | Required, minimum 6 characters |
+* Name is required
+* Email must be valid
+* Password must be at least 6 characters
 
 ### Product Validation
 
-| Field | Rule |
-|-------|------|
-| name | Required, not empty |
-| price | Required, must be a number |
-| description | Optional, must be a string |
-| category | Optional, must be a string |
+* Name is required
+* Price is required
+* Price must be a number
+* Description is optional
+* Category is optional
 
----
+## Testing
 
-## 🗄️ Database Schema
+You can test all endpoints using:
 
-### User Schema
+* Postman
+* Thunder Client
+* Insomnia
 
-```js
-{
-  name:      String (required),
-  email:     String (required, unique),
-  password:  String (required, hashed),
-  createdAt: Date,
-  updatedAt: Date
-}
-```
+## Author
 
-### Product Schema
-
-```js
-{
-  name:        String (required),
-  description: String,
-  price:       Number (required),
-  category:    String,
-  images:      [String],  // array of ImageKit URLs
-  createdAt:   Date,
-  updatedAt:   Date
-}
-```
-
----
-
-## 🧪 Testing
-
-Test all endpoints using **Postman** or **Thunder Client**.
-
-**Checklist:**
-- [ ] Register a new user
-- [ ] Login and get JWT token
-- [ ] Create a product with images (form-data)
-- [ ] Get all products
-- [ ] Get products filtered by category
-- [ ] Get a single product by ID
-- [ ] Update a product
-- [ ] Delete a product
-- [ ] Test error cases (wrong ID, missing fields, no token)
-
----
-
- 
- 
+Praful Koli
