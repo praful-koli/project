@@ -1,33 +1,70 @@
 # E-Commerce Product API
 
-REST API for managing products in an e-commerce application.
+A comprehensive RESTful API designed for managing e-commerce products with secure authentication, image upload capabilities, category-based filtering, and complete CRUD operations.
 
-This project is built using Node.js, Express.js, MongoDB, JWT, Multer, and ImageKit. It provides user authentication, product management, image uploads, and category-based filtering.
+Built using **Node.js**, **Express.js**, **MongoDB**, **JWT Authentication**, **Multer**, and **ImageKit**.
+
+---
 
 ## Features
 
-* User registration and login
-* JWT authentication
-* Create, update, delete, and fetch products
-* Upload multiple product images
-* Store images using ImageKit
-* Filter products by category
-* Request validation using express-validator
-* Centralized error handling
+### Authentication
+
+* User Registration
+* User Login
+* JWT-Based Authentication
+* Password Hashing using Bcrypt
+
+### Product Management
+
+* Create Products
+* Get All Products
+* Get Product By ID
+* Update Products
+* Delete Products
+
+### Image Uploads
+
+* Multiple Image Upload Support
+* Multer Integration
+* Cloud Storage using ImageKit
+
+### Validation & Security
+
+* Request Validation using Express Validator
+* Protected Routes
+* Centralized Error Handling
+* Clean Project Architecture
+
+---
 
 ## Project Structure
 
-```text
-server
+```bash
+E-commerce/server
 │
 ├── src
 │   ├── controllers
+│   │   └── products.controller.js
 │   ├── middlewares
+│   │   ├── auth.middleware.js
+│   │   ├── error.middleware.js
+│   │   └── validator.middleware.js
 │   ├── models
+│   │   ├── products.model.js
+│   │   └── users.model.js
 │   ├── routes
+│   │   ├── auth.route.js
+│   │   └── product.route.js
 │   ├── services
+│   │   ├── auth.services.js
+│   │   └── products.services.js
 │   ├── utils
+│   │   ├── ApiError.js
+│   │   └── asyncHandler.js
 │   ├── validators
+│   │   ├── product.validator.js
+│   │   └── users.validator.js
 │   └── app.js
 │
 ├── .env
@@ -36,35 +73,43 @@ server
 └── server.js
 ```
 
+---
+
 ## Tech Stack
 
-* Node.js
-* Express.js
-* MongoDB
-* Mongoose
-* JWT
-* Bcrypt
-* Multer
-* ImageKit
-* Express Validator
+| Technology        | Usage                 |
+| ----------------- | --------------------- |
+| Node.js           | Runtime Environment   |
+| Express.js        | Backend Framework     |
+| MongoDB           | Database              |
+| Mongoose          | ODM                   |
+| JWT               | Authentication        |
+| Bcrypt            | Password Hashing      |
+| Multer            | File Upload Handling  |
+| ImageKit          | Cloud Image Storage   |
+| Express Validator | Request Validation    |
+| Dotenv            | Environment Variables |
 
-## Installation
+---
 
-Clone the repository:
+## Installation & Setup
+
+### 1. Clone Repository
 
 ```bash
-git clone https://github.com/praful-koli/project.git
-
-cd project
+git clone https://github.com/your-username/ecommerce-product-api.git
+cd ecommerce-product-api
 ```
 
-Install dependencies:
+### 2. Install Dependencies
 
 ```bash
 npm install
 ```
 
-Create a `.env` file in the root directory:
+### 3. Configure Environment Variables
+
+Create a `.env` file in the root directory.
 
 ```env
 PORT=3000
@@ -78,29 +123,53 @@ IMAGEKIT_PRIVATE_KEY=your_private_key
 IMAGEKIT_URL_ENDPOINT=https://ik.imagekit.io/your_imagekit_id
 ```
 
-Run the server:
+### 4. Run Application
+
+#### Development Mode
 
 ```bash
 npm run dev
 ```
 
-The server will start on:
+#### Production Mode
 
-```text
+```bash
+npm start
+```
+
+Server will run on:
+
+```bash
 http://localhost:3000
 ```
 
-## Image Upload
+---
 
-Images are uploaded using Multer and stored in ImageKit.
+## Image Upload Workflow
 
-Install required packages:
+This project utilizes **Multer Memory Storage** in combination with **ImageKit Cloud Storage** for efficient image handling and storage.
+
+```text
+Client
+   ↓
+Multer
+   ↓
+Memory Buffer
+   ↓
+ImageKit Upload
+   ↓
+Image URL Generated
+   ↓
+MongoDB Stores URLs
+```
+
+### Install Packages
 
 ```bash
 npm install multer imagekit
 ```
 
-Basic Multer configuration:
+### Multer Configuration
 
 ```js
 import multer from "multer";
@@ -112,81 +181,207 @@ export const upload = multer({
 });
 ```
 
-## Authentication
+### ImageKit Configuration
 
-After login, a JWT token is returned.
+```js
+import ImageKit from "imagekit";
 
-For protected routes, include the token in the request header:
-
-```http
-Authorization: Bearer YOUR_TOKEN
+const imagekit = new ImageKit({
+  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
+});
 ```
 
-## API Routes
+---
 
-### Auth Routes
+## Authentication Flow
 
-| Method | Route              |
-| ------ | ------------------ |
-| POST   | /api/auth/register |
-| POST   | /api/auth/login    |
+```text
+Register User
+      ↓
+Login User
+      ↓
+Receive JWT Token
+      ↓
+Add Token in Authorization Header
+      ↓
+Access Protected Routes
+```
+
+### Authorization Header
+
+```http
+Authorization: Bearer YOUR_JWT_TOKEN
+```
+
+---
+
+## API Endpoints
+
+### Authentication Routes
+
+| Method | Endpoint             | Description   |
+| ------ | -------------------- | ------------- |
+| POST   | `/api/auth/register` | Register User |
+| POST   | `/api/auth/login`    | Login User    |
 
 ### Product Routes
 
-| Method | Route             | Access    |
-| ------ | ----------------- | --------- |
-| GET    | /api/products     | Public    |
-| GET    | /api/products/:id | Public    |
-| POST   | /api/products     | Protected |
-| PUT    | /api/products/:id | Protected |
-| DELETE | /api/products/:id | Protected |
+| Method | Endpoint            | Access    |
+| ------ | ------------------- | --------- |
+| GET    | `/api/products`     | Public    |
+| GET    | `/api/products/:id` | Public    |
+| POST   | `/api/products`     | Protected |
+| PUT    | `/api/products/:id` | Protected |
+| DELETE | `/api/products/:id` | Protected |
 
-## User Schema
+---
 
-```js
-{
-  name: String,
-  email: String,
-  password: String
-}
-```
+## Route Access
+
+| Method | Endpoint             | Access    |
+| ------ | -------------------- | --------- |
+| POST   | `/api/auth/register` | Public    |
+| POST   | `/api/auth/login`    | Public    |
+| GET    | `/api/products`      | Public    |
+| GET    | `/api/products/:id`  | Public    |
+| POST   | `/api/products`      | Protected |
+| PUT    | `/api/products/:id`  | Protected |
+| DELETE | `/api/products/:id`  | Protected |
+
+---
 
 ## Product Schema
 
 ```js
 {
-  name: String,
+  name: {
+    type: String,
+    required: true
+  },
+
   description: String,
-  price: Number,
+
+  price: {
+    type: Number,
+    required: true
+  },
+
   category: String,
+
   images: [String]
+
+},
+{
+  timestamps: true
 }
 ```
+
+---
+
+## User Schema
+
+```js
+{
+  name: {
+    type: String,
+    required: true
+  },
+
+  email: {
+    type: String,
+    unique: true,
+    required: true
+  },
+
+  password: {
+    type: String,
+    required: true
+  }
+
+},
+{
+  timestamps: true
+}
+```
+
+---
 
 ## Validation Rules
 
 ### User Validation
 
-* Name is required
-* Email must be valid
-* Password must be at least 6 characters
+| Field    | Rules                 |
+| -------- | --------------------- |
+| Name     | Required              |
+| Email    | Required, Valid Email |
+| Password | Minimum 6 Characters  |
 
 ### Product Validation
 
-* Name is required
-* Price is required
-* Price must be a number
-* Description is optional
-* Category is optional
+| Field       | Rules            |
+| ----------- | ---------------- |
+| Name        | Required         |
+| Price       | Required, Number |
+| Description | Optional         |
+| Category    | Optional         |
 
-## Testing
+---
 
-You can test all endpoints using:
+## API Testing
+
+All API endpoints can be tested using:
 
 * Postman
 * Thunder Client
 * Insomnia
 
+Ensure that a valid JWT token is included when accessing protected endpoints.
+
+---
+
+## Sample Protected Request
+
+```http
+POST /api/products
+Authorization: Bearer YOUR_TOKEN
+Content-Type: multipart/form-data
+```
+
+---
+
+## Future Improvements
+
+* Product Search
+* Pagination
+* Sorting
+* Wishlist Feature
+* Shopping Cart API
+* Order Management
+* Role-Based Authorization
+* Refresh Token Authentication
+
+---
+
+## Contributing
+
+Contributions, issues, and feature requests are welcome.
+
+Feel free to fork the repository and submit a pull request.
+
+---
+
+## License
+
+This project was created as part of the **Kodex Backend Assignment** and is available for educational purposes.
+
+---
+
 ## Author
 
-Praful Koli
+**Praful Koli**
+
+MCA Graduate | MERN Stack Developer
+
+GitHub: https://github.com/praful-koli
