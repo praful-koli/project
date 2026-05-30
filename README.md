@@ -97,8 +97,8 @@ E-commerce/server
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/your-username/ecommerce-product-api.git
-cd ecommerce-product-api
+git clone https://github.com/praful-koli/project.git
+cd ecommerce/server
 ```
 
 ### 2. Install Dependencies
