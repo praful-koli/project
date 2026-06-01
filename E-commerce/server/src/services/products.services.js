@@ -38,12 +38,7 @@ const getAllProductsServices = async ({ category }) => {
   const products = await productModel.find(filter);
 
   if (products.length === 0) {
-    return res.status(404).json({
-      success: false,
-      message: category
-        ? `No products found in category: ${category}`
-        : "No products found",
-    });
+    throw new ApiError(404, category ? `No products found in category : ${category}` : "No products found" )
   }
 
   return products;
